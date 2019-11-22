@@ -1,0 +1,63 @@
+
+    charset_types
+        text/css
+        text/plain
+        text/vnd.wap.wml
+        application/javascript
+        application/json
+        application/rss+xml
+        application/xml;
+
+    gzip on;
+
+    gzip_comp_level  7;
+    gzip_min_length  250;
+    gzip_proxied     any;
+#    gzip_proxied     expired no-cache no-store private auth;
+    gzip_vary        on;
+    gzip_static      on;
+    gzip_disable     "MSIE [1-6]\.(?!.*SV1)";
+#    gzip_http_version 1.1;
+    gzip_buffers 16 8k;
+
+    gzip_types
+        application/atom+xml
+        application/font-truetype
+        application/font-opentype
+        application/font-woff
+        application/font-ttf
+        application/javascript
+        application/json
+        application/ld+json
+        application/manifest+json
+        application/rss+xml
+        application/vnd.geo+json
+        application/vnd.ms-fontobject
+        application/x-javascript
+        application/x-shockwave-flash
+        application/x-font-truetype
+        application/x-font-opentype
+        application/x-font-woff
+        application/x-font-ttf
+        application/x-web-app-manifest+json
+        application/xhtml+xml
+        application/xml
+        application/xml+rss
+        font/opentype
+        image/bmp
+        image/jpeg
+        image/jpg
+        image/png
+        image/svg+xml
+        image/webp
+        image/x-icon
+        text/cache-manifest
+        text/css
+        text/javascript
+        text/plain
+        text/vcard
+        text/vnd.rim.location.xloc
+        text/vtt
+        text/xml
+        text/x-component
+        text/x-cross-domain-policy;

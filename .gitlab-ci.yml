@@ -1,0 +1,16 @@
+stages:
+  - build
+
+before_script:
+- docker info
+- docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REGISTRY_HOST
+
+build:
+  stage: build
+  tags:
+    - docker
+    - runners
+  script:
+    - docker build -t $REGISTRY_HOST/$CI_PROJECT_PATH:$CI_BUILD_REF -t $REGISTRY_HOST/$CI_PROJECT_PATH:latest .
+    - docker push $REGISTRY_HOST/$CI_PROJECT_PATH:$CI_BUILD_REF
+    - docker push $REGISTRY_HOST/$CI_PROJECT_PATH:latest
