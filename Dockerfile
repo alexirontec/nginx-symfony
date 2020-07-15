@@ -1,55 +1,36 @@
-FROM debian:stretch-slim
-
-ARG NGINX_V=1.15.7
+FROM nginx:1.19
 
 RUN apt update && apt upgrade --yes
-RUN apt autoremove --yes
-
-RUN apt remove --yes mysql* mariadb*
-RUN apt autoremove --yes
 
 # Install required dependencies
 RUN apt install --yes --no-install-suggests --no-install-recommends \
-    curl unzip wget vim tree ccze git gnupg
-
-RUN apt install --yes --no-install-suggests --no-install-recommends \
-    openssl libssl-dev sudo apt-utils
-
-RUN apt install --yes --no-install-suggests --no-install-recommends \
-    build-essential zlib1g-dev libpcre3-dev uuid-dev ca-certificates
-
-# Install ngxpagespeed
-RUN /bin/bash -c "$(curl -f -L -sS https://ngxpagespeed.com/install) -y --nginx-version $NGINX_V --additional-nginx-configure-arguments '--with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --user=nginx --group=nginx --sbin-path=/usr/sbin/nginx --pid-path=/var/run/nginx.pid --lock-path=/var/run/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log'"
-
-RUN useradd --system --no-create-home --user-group nginx
+    curl unzip wget vim tree gnupg libfcgi0ldbl openssl libssl-dev sudo apt-utils zlib1g-dev libpcre3-dev uuid-dev ca-certificates
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 RUN rm -rf $HOME
-RUN apt-get purge build-essential -y && apt-get autoremove -y
 
-ENV NGINX_PATH "/usr/local/nginx"
-RUN openssl genrsa -out $NGINX_PATH/conf/server.key 1024
-RUN openssl req -new -key $NGINX_PATH/conf/server.key -out $NGINX_PATH/conf/server.csr -subj "/C=ES/ST=Bilbao/L=Bizkaia/O=Example Bilbao/CN=examplebilbao.com"
-RUN openssl x509 -req -days 365 -in $NGINX_PATH/conf/server.csr -signkey $NGINX_PATH/conf/server.key -out $NGINX_PATH/conf/server.crt
+ENV NGINX_PATH "/etc/nginx/"
+ENV NGINX_PATH_CONFIG $NGINX_PATH"conf.d/"
+
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $NGINX_PATH_CONFIG/server.key -out $NGINX_PATH_CONFIG/server.crt -subj "/C=ES/ST=Bilbao/L=Bizkaia/O=API/CN=localhost"
+RUN openssl dhparam -out $NGINX_PATH_CONFIG/server.pem 2048
 
 # Limpiar todo
 RUN apt autoremove --yes && apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
-ADD ./nginx.conf /usr/local/nginx/conf/nginx.conf
-ADD ./http.conf /usr/local/nginx/conf/http.conf
-ADD ./https.conf /usr/local/nginx/conf/https.conf
-ADD ./gzip /usr/local/nginx/conf/gzip
-ADD ./mime.types /usr/local/nginx/conf/mime.types
-ADD ./pagespeed /usr/local/nginx/conf/pagespeed
+ADD nginx.conf   /etc/nginx/nginx.conf
+ADD https.conf   /etc/nginx/conf.d/https.conf
+ADD gzip         /etc/nginx/conf.d/gzip
+ADD mime.types   /etc/nginx/conf.d/mime.types
+ADD fastcgi.conf /etc/nginx/conf.d/fastcgi.conf
 
 # Home
 ENV HOME /opt
 WORKDIR /opt/symfony
 
-EXPOSE 80
 EXPOSE 443
 
 ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
