@@ -22,6 +22,7 @@ RUN apt autoremove --yes && apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
 ADD nginx.conf   /etc/nginx/nginx.conf
+ADD http.conf    /etc/nginx/conf.d/http.conf
 ADD https.conf   /etc/nginx/conf.d/https.conf
 ADD gzip         /etc/nginx/conf.d/gzip
 ADD mime.types   /etc/nginx/conf.d/mime.types
