@@ -4,10 +4,10 @@ RUN apt update && apt upgrade --yes
 
 # Install required dependencies
 RUN apt install --yes --no-install-suggests --no-install-recommends \
-    curl unzip wget vim tree gnupg libfcgi0ldbl openssl libssl-dev sudo apt-utils zlib1g-dev libpcre3-dev uuid-dev ca-certificates
+    curl unzip wget vim tree gnupg libfcgi0ldbl openssl libssl-dev sudo apt-utils zlib1g-dev libpcre3-dev uuid-dev ca-certificates libfcgi-bin
 
-RUN ln -sf /dev/stdout /var/log/nginx/access.log
-RUN ln -sf /dev/stderr /var/log/nginx/error.log
+# RUN ln -sf /dev/stdout /var/log/nginx/access.log
+# RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 RUN rm -rf $HOME
 
